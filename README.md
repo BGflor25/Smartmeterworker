@@ -32,7 +32,10 @@ If the package is private, log in on the Pi first with a token that has `read:pa
 
 ## Configuration
 `appsettings.json` → `Meter` section, overridable with env vars (`Meter__ApiUrl`, `Meter__Interval`,
-`Meter__PortName`, `Meter__ReadTimeout`, `Meter__BaudRate`).
+`Meter__PortName`, `Meter__ReadTimeout`, `Meter__BaudRate`, `Meter__DtrEnable`, `Meter__RtsEnable`).
+
+`DtrEnable`/`RtsEnable` default to `true`: many P1 cables power the meter's data-request line from
+DTR/RTS, and the meter sends nothing while they are low (.NET lowers them by default, `cat` and pyserial don't).
 
 Local test without a meter: set `Meter__SourceFile=/path/to/output.txt` and the last valid telegram in that
 file is used instead of the serial port.
