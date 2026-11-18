@@ -1,0 +1,21 @@
+services:
+  smartmeter:
+    build: ./src/SmartMeter.Worker
+    image: smartmeter-worker:latest
+    container_name: smartmeter
+    restart: unless-stopped
+    devices:
+      # Prefer the stable by-id path: ls -l /dev/serial/by-id/ on the Pi
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    group_add:
+      - "20" # gid of 'dialout' on the Pi (check: getent group dialout)
+    environment:
+      Meter__PortName: /dev/ttyUSB0
+      Meter__ApiUrl: http://192.168.20.157:8080/api/meterdata/upload
+      Meter__Interval: "00:05:00"
+      TZ: Europe/Brussels
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

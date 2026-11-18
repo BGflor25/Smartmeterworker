@@ -1,0 +1,67 @@
+{
+  "meter_model": 50217.0,
+  "equipment_identifier": 0,
+  "timestamp": 1794990615.0,
+  "electricity_import_low_tariff": {
+    "value": 4567.123,
+    "unit": "kWh"
+  },
+  "electricity_import_high_tariff": {
+    "value": 6789.456,
+    "unit": "kWh"
+  },
+  "electricity_export_low_tariff": {
+    "value": 1234.567,
+    "unit": "kWh"
+  },
+  "electricity_export_high_tariff": {
+    "value": 987.654,
+    "unit": "kWh"
+  },
+  "tariff_indicator": 1.0,
+  "1-0:1.4.0": {
+    "value": 0,
+    "unit": "kW"
+  },
+  "1-0:1.6.0": 0,
+  "0-0:98.1.0": 0,
+  "current_power_usage": {
+    "value": 0.456,
+    "unit": "kW"
+  },
+  "current_power_delivery": {
+    "value": 0.0,
+    "unit": "kW"
+  },
+  "instantaneous_active_power_l1_pos": {
+    "value": 0.456,
+    "unit": "kW"
+  },
+  "instantaneous_active_power_l2_pos": {
+    "value": 0,
+    "unit": "kW"
+  },
+  "voltage": {
+    "value": 231.4,
+    "unit": "V"
+  },
+  "current": {
+    "value": 2.1,
+    "unit": "A"
+  },
+  "0-0:96.3.10": 0,
+  "0-0:17.0.0": {
+    "value": 0,
+    "unit": "kW"
+  },
+  "max_current": {
+    "value": 0,
+    "unit": "A"
+  },
+  "0-1:24.1.0": 3.0,
+  "gas_device_id": 0,
+  "0-1:24.4.0": 0,
+  "gas_consumption": 2345.678,
+  "water_consumption": 0,
+  "checksum": "72BC"
+}
