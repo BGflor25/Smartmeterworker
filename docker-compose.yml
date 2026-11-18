@@ -1,7 +1,9 @@
 services:
   smartmeter:
+    # Published by .github/workflows/docker-publish.yml. Use `docker compose build` with the
+    # build line below to build locally instead.
+    image: ghcr.io/bgflor25/smartmeterapiparser:latest
     build: ./src/SmartMeter.Worker
-    image: smartmeter-worker:latest
     container_name: smartmeter
     restart: unless-stopped
     devices:

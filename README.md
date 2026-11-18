@@ -9,12 +9,26 @@ uname -m                        # aarch64 expected (64-bit Pi OS)
 ls -l /dev/serial/by-id/        # find the P1 cable; put that path in docker-compose.yml `devices:`
 getent group dialout            # gid for `group_add` (usually 20)
 
-docker compose up -d --build
+docker compose pull             # latest image from ghcr.io
+docker compose up -d
 docker compose logs -f          # expect: "Meter ...: usage x kW ... -> HTTP 200"
 ```
 After a few good cycles, remove the old cron entry (`crontab -e`).
 
+Update later with `docker compose pull && docker compose up -d`. To build on the Pi itself instead of
+pulling, use `docker compose up -d --build`.
+
 Building on the Mac instead: `docker buildx build --platform linux/arm64 -t smartmeter-worker src/SmartMeter.Worker`.
+
+## Published image
+`.github/workflows/docker-publish.yml` runs the tests and builds `ghcr.io/bgflor25/smartmeterapiparser`
+for `linux/amd64` and `linux/arm64`:
+- push to `main` → tags `latest` and `sha-<commit>`
+- tag `vX.Y.Z` → tags `X.Y.Z` and `X.Y`
+- pull requests → build only, nothing published
+
+If the package is private, log in on the Pi first with a token that has `read:packages`:
+`echo <token> | docker login ghcr.io -u BGflor25 --password-stdin`.
 
 ## Configuration
 `appsettings.json` → `Meter` section, overridable with env vars (`Meter__ApiUrl`, `Meter__Interval`,
