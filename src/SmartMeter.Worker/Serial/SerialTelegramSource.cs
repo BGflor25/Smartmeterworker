@@ -20,11 +20,23 @@ public sealed class SerialTelegramSource(IOptions<MeterOptions> options, ILogger
     private string? Read(CancellationToken ct)
     {
         var o = options.Value;
+
+        // SerialPort reports a missing device as "Access denied", which is misleading.
+        if (!File.Exists(o.PortName))
+        {
+            logger.LogError(
+                "Serial port {Port} not found. Is the P1 cable plugged in and the device mapped into the container (devices:)?",
+                o.PortName);
+            return null;
+        }
+
         using var port = new SerialPort(o.PortName, o.BaudRate, Parity.None, 8, StopBits.One)
         {
             Encoding = Encoding.Latin1, // byte-preserving, needed for the CRC
             NewLine = "\n",
             ReadTimeout = 1000,
+            DtrEnable = o.DtrEnable, // P1 data-request line on many cables
+            RtsEnable = o.RtsEnable,
         };
         port.Open();
         port.DiscardInBuffer();
@@ -32,6 +44,7 @@ public sealed class SerialTelegramSource(IOptions<MeterOptions> options, ILogger
         var sw = Stopwatch.StartNew();
         var buffer = new StringBuilder();
         var inTelegram = false;
+        var linesReceived = 0;
 
         while (sw.Elapsed < o.ReadTimeout)
         {
@@ -46,6 +59,7 @@ public sealed class SerialTelegramSource(IOptions<MeterOptions> options, ILogger
             {
                 continue;
             }
+            linesReceived++;
 
             if (line.StartsWith('/'))
             {
@@ -70,7 +84,14 @@ public sealed class SerialTelegramSource(IOptions<MeterOptions> options, ILogger
             buffer.Append(line).Append('\n');
         }
 
-        logger.LogWarning("No valid telegram received on {Port} within {Timeout}", o.PortName, o.ReadTimeout);
+        if (linesReceived == 0)
+            logger.LogWarning(
+                "No data received on {Port} within {Timeout} (check the cable and DTR/RTS: Meter__DtrEnable={Dtr}, Meter__RtsEnable={Rts})",
+                o.PortName, o.ReadTimeout, o.DtrEnable, o.RtsEnable);
+        else
+            logger.LogWarning(
+                "Received {Lines} lines but no valid telegram on {Port} within {Timeout} (check the baud rate, {Baud})",
+                linesReceived, o.PortName, o.ReadTimeout, o.BaudRate);
         return null;
     }
 }
