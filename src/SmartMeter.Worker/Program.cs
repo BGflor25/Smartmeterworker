@@ -18,6 +18,13 @@ builder.Services.AddSingleton<ITelegramSource>(sp =>
         : ActivatorUtilities.CreateInstance<FileTelegramSource>(sp));
 
 builder.Services.AddHttpClient<MeterApiClient>()
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        // One POST per Interval: don't reuse a keep-alive connection the server may have silently
+        // closed while idle (otherwise the request hangs until the attempt timeout, then retries).
+        PooledConnectionIdleTimeout = TimeSpan.FromSeconds(15),
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+    })
     .AddStandardResilienceHandler();
 
 builder.Services.AddHostedService<MeterWorker>();
