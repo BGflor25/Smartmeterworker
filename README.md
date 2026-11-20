@@ -1,7 +1,7 @@
 # SmartMeter worker
 
 .NET 10 background service that reads the DSMR P1 port, validates the CRC, parses the telegram,
-and POSTs it to the meter-data API every 5 minutes. It replaces `run_dsmr.sh` + `parse_dsmr.py` + cron.
+and POSTs it to the meter-data API every 5 minutes.
 
 ## Deploy on the Raspberry Pi
 ```bash
